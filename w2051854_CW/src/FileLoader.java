@@ -43,7 +43,7 @@ public class FileLoader {
                 throw new IOException("Invalid integer" + filename);
             }
 
-            // Validate input
+
             if(nodeU < 0 || nodeV < 0  ||  nodeU >= numNodes ||  nodeV >= numNodes){
                 throw new IOException("Invalid node number" + filename);
             }

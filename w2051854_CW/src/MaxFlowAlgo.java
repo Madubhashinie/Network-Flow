@@ -15,10 +15,16 @@ public class MaxFlowAlgo {
         this.visited = new boolean[graph.getNumNodes()];
     }
 
-    // DFS to find an augmenting path
+
+    /**
+     * Finds an augmenting path from the current node to the sink using DFS.
+     * @param nodeU The current node being explored.
+     * @param path  The current path of edges from source to the current node.
+     * @return A list of edges forming an augmenting path to the sink, or null if no path exists.
+     */
     private List<GraphStructure.Edge> findAugmentingPath(int nodeU, List<GraphStructure.Edge> path) {
         if( nodeU == sink){
-            return path; // Reached the sink
+            return path;
         }
         visited[nodeU] = true;
         for(GraphStructure.Edge edge: graph.getEdges(nodeU)){
@@ -29,22 +35,26 @@ public class MaxFlowAlgo {
                 newPath.add(edge);
                 List<GraphStructure.Edge> result = findAugmentingPath(nodeV, newPath);
                 if(result != null){
-                    return result;  //path found
+                    return result;
                 }
             }
 
         }
-        return null; // No path found
+        return null;
     }
 
-    // Compute maximum flow using greedy approach
-
-    //need to check ====================
-
-    // Compute maximum flow using greedy approach
+    /**
+     * Computes the maximum flow from source to sink using the Ford-Fulkerson algorithm.
+     * Prints detailed output for each iteration, including paths, bottleneck capacities, and updated flows.
+     * @param filename The name of the input file.
+     * @return The maximum flow value achieved.
+     */
     public int computeMaxFlow(String filename) {
         int maxFlow = 0;
         int iteration = 0;
+
+        // Record start time
+        long startTime = System.nanoTime();
 
         System.out.println("\nProcessing file: " + filename);
         System.out.println("Number of nodes: " + graph.getNumNodes());
@@ -52,12 +62,13 @@ public class MaxFlowAlgo {
         while (true) {
             Arrays.fill(visited, false);
             List<GraphStructure.Edge> path = findAugmentingPath(source, new ArrayList<>());
-            if (path == null) break; // No augmenting path
+            if (path == null) {
+                break;
+            }
 
             iteration++;
             System.out.println("\nIteration " + iteration + ": Augmenting path found");
 
-            // Find bottleneck capacity
             int bottleneck = Integer.MAX_VALUE;
             System.out.print("Path: " + source);
             for (GraphStructure.Edge edge : path) {
@@ -68,10 +79,8 @@ public class MaxFlowAlgo {
             System.out.println();
             System.out.println("Bottleneck capacity: " + bottleneck);
 
-            // Augment flow along the path
             for (GraphStructure.Edge edge : path) {
                 edge.flow += bottleneck;
-                // Update backward edge
                 GraphStructure.Edge backward = graph.getEdge(edge.to, path.get(path.indexOf(edge)).to == edge.to ? path.get(path.indexOf(edge)).to : source);
                 if (backward != null) {
                     backward.flow -= bottleneck;
@@ -90,7 +99,12 @@ public class MaxFlowAlgo {
             }
         }
 
+        long endTime = System.nanoTime();
+        double elapsedTimeMs = (endTime - startTime) / 1000000.0;
+
         System.out.println("\nMaximum flow for " + filename + ": " + maxFlow);
+        System.out.printf("Execution time for %s: %.2f ms%n", filename, elapsedTimeMs);
+
         return maxFlow;
     }
 

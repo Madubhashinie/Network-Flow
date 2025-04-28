@@ -1,4 +1,5 @@
 import java.io.File;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
@@ -17,36 +18,42 @@ public class Main {
             System.out.println("4. Exit");
             System.out.println("==============");
             System.out.print("Enter your choice (1, 2, 3, or 4): ");
-            int choice = scanner.nextInt();
+
+            int choice;
+            try {
+                choice = scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+                scanner.nextLine();
+                continue;
+            }
             scanner.nextLine();
 
             if (choice == 1) {
                 System.out.println();
                 System.out.println("Test with custom testing files");
 
-                // Specify the test folder path (relative to the project root)
+                // Specify the test folder path
                 File testFolder = new File("test");
 
-                // Check if the test folder exists
+
                 if (!testFolder.exists() || !testFolder.isDirectory()) {
                     System.out.println("Error: 'test' folder not found in the project directory.");
-                    scanner.close();
-                    return;
+                    continue;
                 }
 
                 // Get all files in the test folder
                 File[] testFiles = testFolder.listFiles();
                 if (testFiles == null || testFiles.length == 0) {
                     System.out.println("Error: No files found in the test folder.");
-                    scanner.close();
-                    return;
+                    continue;
                 }
 
-                // Process each file in the test folder
+
                 for (File file : testFiles) {
-                    if (file.isFile()) { // Ensure it's a file, not a subdirectory
+                    if (file.isFile()) {
                         String filename = file.getName();
-                        String filepath = "test/" + filename; // Path relative to the project root
+                        String filepath = "test/" + filename;
                         try {
                             GraphStructure graphStructure = FileLoader.file(filepath);
                             System.out.println("Successfully parsed " + filename + ": " + graphStructure.getNumNodes() + " nodes");
@@ -61,16 +68,22 @@ public class Main {
 
             } else if (choice == 2) {
                 System.out.print("Enter the benchmark file number (1 to 19, for bridge_i.txt): ");
-                int fileNumber = scanner.nextInt();
 
+                int fileNumber;
+                try {
+                    fileNumber = scanner.nextInt();
+                } catch (InputMismatchException e) {
+                    System.out.println("Invalid input. Please enter a valid number.");
+                    scanner.nextLine();
+                    continue;
+                }
 
                 if (fileNumber < 1 || fileNumber > 19) {
                     System.out.println("Invalid file number. Please enter a number between 1 and 19.");
-                    scanner.close();
-                    return;
+                    continue;
                 }
 
-                // Construct the filename and filepath
+
                 String filename = "bridge_" + fileNumber + ".txt";
                 String filepath = "benchmarks/" + filename;
 
@@ -90,7 +103,14 @@ public class Main {
 
             }else if (choice == 3) {
                 System.out.print("Enter the ladder benchmark file number (1 to 20, for ladder_i.txt): ");
-                int fileNumber = scanner.nextInt();
+                int fileNumber;
+                try {
+                    fileNumber = scanner.nextInt();
+                } catch (InputMismatchException e) {
+                    System.out.println("Invalid input. Please enter a valid number.");
+                    scanner.nextLine();
+                    continue;
+                }
 
                 if (fileNumber < 1 || fileNumber > 20) {
                     System.out.println("Invalid file number. Please enter a number between 1 and 20.");
